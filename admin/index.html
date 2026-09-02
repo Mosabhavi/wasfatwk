@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>لوحة الوصفات — وصفات</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* =====================================================
+       Admin portal (no-code). Reads/writes data/recipes.json
+       directly in the GitHub repo through the GitHub API, so
+       the owner never touches code or files. Not linked from
+       the public site; noindex.
+       ===================================================== */
+    :root { --espresso:#2b1a12; --cream:#f6ecda; --latte:#fbf5ea; --card:#fffaf1; --gold:#c9963b; --terra:#b5573a; --green:#1f5c3b; --ink2:#6b5646; --line:rgba(43,26,18,.12); --r:16px; --shadow:0 6px 22px rgba(43,26,18,.10); }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:'Tajawal',sans-serif; background:var(--cream); color:var(--espresso); line-height:1.6; }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 18px 16px 60px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 18px; }
+    header h1 { margin:0; font-size:1.4rem; }
+    header .sub { font-size:.85rem; color:var(--ink2); }
+    .box { background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:20px; }
+    .btn { font:inherit; font-weight:800; padding:12px 20px; border-radius:999px; border:1.5px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; color:inherit; }
+    .btn:disabled { opacity:.5; cursor:wait; }
+    .primary { background:var(--espresso); color:var(--cream); }
+    .gold { background:var(--gold); color:var(--espresso); }
+    .outline { background:transparent; border-color:var(--espresso); }
+    .danger { background:transparent; border-color:var(--terra); color:var(--terra); }
+    .sm { padding:7px 12px; font-size:.85rem; }
+    .big { padding:16px 24px; font-size:1.1rem; width:100%; }
+    label { display:block; font-weight:700; margin:14px 0 4px; }
+    label small { color:var(--ink2); font-weight:400; }
+    input, textarea, select { width:100%; font:inherit; padding:11px 13px; border-radius:12px; border:1.5px solid rgba(43,26,18,.18); background:#fff; }
+    input:focus, textarea:focus, select:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,150,59,.2); }
+    textarea { min-height:90px; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .chips label { display:inline-flex; align-items:center; gap:6px; margin:0; padding:7px 13px; border:1.5px solid rgba(43,26,18,.18); border-radius:999px; background:#fff; cursor:pointer; }
+    .chips input { width:auto; margin:0; }
+    .chips label:has(input:checked) { background:var(--espresso); color:var(--cream); border-color:var(--espresso); }
+    .list { display:flex; flex-direction:column; gap:10px; }
+    .item { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; box-shadow:var(--shadow); }
+    .item .thumb { width:56px; height:56px; border-radius:12px; flex:none; display:grid; place-items:center; font-size:1.5rem; background:#efdcc0; overflow:hidden; }
+    .item .thumb.cold { background:#cfe0d4; }
+    .item .thumb img { width:100%; height:100%; object-fit:cover; }
+    .item .info { flex:1; min-width:0; }
+    .item .title { font-weight:800; }
+    .item .meta { font-size:.82rem; color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .badge { font-size:.75rem; font-weight:800; color:#fff; padding:2px 9px; border-radius:999px; }
+    .badge.hot { background:var(--terra); } .badge.cold { background:var(--green); }
+    .item .acts { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+    .iconbtn { font:inherit; border:1.5px solid var(--line); background:#fff; border-radius:10px; width:36px; height:36px; cursor:pointer; font-weight:800; }
+    .iconbtn:hover { border-color:var(--gold); }
+    .status { margin:12px 0; padding:12px 16px; border-radius:12px; font-weight:700; display:none; }
+    .status.ok { display:block; background:rgba(31,92,59,.12); color:var(--green); }
+    .status.err { display:block; background:rgba(181,87,58,.12); color:var(--terra); }
+    .status.info { display:block; background:rgba(201,150,59,.14); color:#7a5716; }
+    .steps { background:var(--latte); border-radius:12px; padding:12px 16px; font-size:.95rem; }
+    .steps ol { margin:6px 0 0; padding-inline-start:20px; }
+    .topbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .topbar .btn { flex:1; }
+    .img-preview { margin-top:8px; width:100%; max-height:200px; object-fit:cover; border-radius:12px; display:none; }
+    .hidden { display:none !important; }
+    .footer-actions { display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; }
+    .footer-actions .btn { flex:1; }
+    .muted { color:var(--ink2); font-size:.9rem; }
+    .link { background:none; border:0; font:inherit; color:var(--terra); font-weight:700; cursor:pointer; padding:0; }
+    @media (max-width:520px) { .row { grid-template-columns:1fr; } .item { flex-wrap:wrap; } .item .acts { width:100%; } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>لوحة الوصفات</h1>
+      <div class="sub">وصفات — WasfatwK</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="btn outline sm" href="../" target="_blank" rel="noopener">شوف الموقع</a>
+      <button class="btn outline sm hidden" id="logout" type="button">خروج</button>
+    </div>
+  </header>
+
+  <div class="status" id="status"></div>
+
+  <!-- ========== Screen 1: Connect (one-time) ========== -->
+  <section class="box" id="connect">
+    <h2 style="margin:0 0 6px">ربط اللوحة بالموقع</h2>
+    <p class="muted" style="margin:0 0 12px">مرة وحدة بس. الصق رمز الدخول اللي وصلك، وبعدها اللوحة تفتح مباشرة كل مرة من نفس الجوال أو الجهاز.</p>
+    <div id="repoFields">
+      <div class="row">
+        <div><label>حساب GitHub <small>(owner)</small></label><input id="c_owner" placeholder="username"></div>
+        <div><label>اسم المستودع <small>(repo)</small></label><input id="c_repo" placeholder="wasfatwk"></div>
+      </div>
+      <label>الفرع <small>(branch)</small></label><input id="c_branch" value="main">
+    </div>
+    <label>رمز الدخول</label>
+    <input id="c_token" type="password" placeholder="github_pat_…" autocomplete="off">
+    <div class="footer-actions">
+      <button class="btn primary big" id="connectBtn" type="button">دخول</button>
+    </div>
+  </section>
+
+  <!-- ========== Screen 2: Recipe list ========== -->
+  <section id="listScreen" class="hidden">
+    <div class="topbar">
+      <button class="btn gold big" id="addBtn" type="button">＋ وصفة جديدة</button>
+    </div>
+    <p class="muted" id="countLine"></p>
+    <div class="list" id="list"></div>
+  </section>
+
+  <!-- ========== Screen 3: Add / Edit form ========== -->
+  <section id="formScreen" class="box hidden">
+    <h2 id="formTitle" style="margin:0 0 4px">وصفة جديدة</h2>
+    <p class="muted" style="margin:0">عبّي اللي تعرفه وخل الباقي فاضي. الحقول اللي عليها * لازم تتعبى.</p>
+    <form id="form">
+      <input type="hidden" id="f_id">
+
+      <label>اسم الوصفة *</label>
+      <input id="f_title" required placeholder="مثال: وصفة الأكواب الثقيلة والعسلية">
+
+      <label>رابط الوصفة من xBloom *</label>
+      <input id="f_source" type="url" required placeholder="https://share-h5.xbloom.com/?id=…">
+
+      <div class="row">
+        <div>
+          <label>نوع الكوب *</label>
+          <select id="f_temp"><option>حارة</option><option>باردة</option></select>
+        </div>
+        <div>
+          <label>عدد الأكواب</label>
+          <select id="f_servings"><option value="1">كوب واحد</option><option value="2">كوبين</option><option value="3">٣ أكواب</option><option value="4">٤ أكواب</option></select>
+        </div>
+      </div>
+
+      <label>الوصف *</label>
+      <textarea id="f_desc" required placeholder="مثال: تنفع للأكواب الثقيلة و العسلية"></textarea>
+
+      <label>الوسوم <small>— اكتبها مثل تيك توك وافصل بينها بـ / </small></label>
+      <input id="f_tags" placeholder="فاكهية / قوام متوسط / إيحاءات واضحة">
+
+      <label>الطابع <small>(عشان الفلتر — اختر اللي يناسب)</small></label>
+      <div class="chips" id="f_chars"></div>
+      <input id="f_charExtra" placeholder="طابع ثاني مو موجود فوق؟ اكتبه هنا" style="margin-top:8px">
+
+      <label>القوام <small>(عشان الفلتر)</small></label>
+      <select id="f_body"><option value="">ما أبي أحدد</option><option>خفيف</option><option>متوسط</option><option>عالي</option></select>
+
+      <label>تنفع لأي محاصيل؟ <small>(اختياري)</small></label>
+      <input id="f_best" placeholder="مثال: المحاصيل ذات المعالجة العسلية أو الثقيلة">
+
+      <label>رابط فيديو تيك توك <small>(اختياري)</small></label>
+      <input id="f_tiktok" type="url" placeholder="https://www.tiktok.com/@wasfatwk/video/…">
+
+      <label>صورة الوصفة <small>(اختياري — من الاستوديو مباشرة)</small></label>
+      <input id="f_imageFile" type="file" accept="image/*">
+      <img id="f_imagePreview" class="img-preview" alt="">
+      <p class="muted" id="f_imageNote" style="margin:6px 0 0"></p>
+      <button type="button" class="link hidden" id="removeImage">حذف الصورة</button>
+
+      <div class="footer-actions">
+        <button class="btn primary big" type="submit" id="saveBtn">حفظ ونشر</button>
+        <button class="btn outline" type="button" id="cancelBtn">رجوع</button>
+      </div>
+    </form>
+  </section>
+
+  <p class="muted" style="text-align:center;margin-top:30px">بعد الحفظ، الموقع يتحدث تلقائياً خلال دقيقة تقريباً.</p>
+</div>
+
+<script>
+/* ---------------------------------------------------------
+   CONFIG — fill these in once so the owner only pastes a token.
+   Leave empty to make the connect screen ask for them.
+   --------------------------------------------------------- */
+const SITE = { owner: 'Mosabhavi', repo: 'wasfatwk', branch: 'main' };
+
+const DATA_PATH = 'data/recipes.json';
+const IMG_DIR = 'assets/img';
+const STANDARD_CHARS = ['فاكهية', 'متوازنة', 'عطرية', 'حموضة', 'شوكولاتية'];
+const LS_KEY = 'wasfatwk_admin';
+
+/* ---------- State ---------- */
+let cfg = null;           // {owner, repo, branch, token}
+let doc = null;           // full parsed recipes.json
+let sha = null;           // sha of recipes.json (needed to update)
+let pendingImage = null;  // {file, name} chosen in the form
+let editingId = null;
+
+const $ = (id) => document.getElementById(id);
+const statusEl = $('status');
+function status(msg, kind = 'info') { statusEl.textContent = msg; statusEl.className = 'status ' + kind; if (kind === 'ok') setTimeout(() => statusEl.className = 'status', 4000); }
+function show(id) { ['connect', 'listScreen', 'formScreen'].forEach((s) => $(s).classList.toggle('hidden', s !== id)); window.scrollTo(0, 0); }
+
+/* ---------- UTF-8 safe base64 ---------- */
+function b64encode(str) { const bytes = new TextEncoder().encode(str); let bin = ''; bytes.forEach((b) => bin += String.fromCharCode(b)); return btoa(bin); }
+function b64decode(b64) { const bin = atob(b64.replace(/\n/g, '')); return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))); }
+function fileToB64(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
+
+/* ---------- GitHub API ---------- */
+function api(path, opts = {}) {
+  return fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`, {
+    ...opts,
+    headers: { Authorization: `Bearer ${cfg.token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json', ...(opts.headers || {}) },
+  });
+}
+async function readData() {
+  const res = await api(`${DATA_PATH}?ref=${cfg.branch}&t=${Date.now()}`);
+  if (res.status === 401) throw new Error('رمز الدخول غير صحيح أو انتهى. اطلب رمز جديد.');
+  if (res.status === 404) throw new Error('ما لقيت ملف الوصفات. تأكد من اسم الحساب والمستودع.');
+  if (!res.ok) throw new Error('تعذر الاتصال بـ GitHub (' + res.status + ')');
+  const j = await res.json();
+  sha = j.sha;
+  doc = JSON.parse(b64decode(j.content));
+  if (!Array.isArray(doc.recipes)) doc.recipes = [];
+}
+async function writeData(message) {
+  const content = b64encode(JSON.stringify(doc, null, 2) + '\n');
+  const res = await api(DATA_PATH, { method: 'PUT', body: JSON.stringify({ message, content, sha, branch: cfg.branch }) });
+  if (res.status === 409) throw new Error('صار تعديل ثاني بنفس الوقت. حدّث الصفحة وجرّب مرة ثانية.');
+  if (!res.ok) throw new Error('ما قدرت أحفظ (' + res.status + '). جرّب مرة ثانية.');
+  sha = (await res.json()).content.sha;
+}
+async function uploadImage(file, name) {
+  const path = `${IMG_DIR}/${name}`;
+  // If the file exists we need its sha to overwrite
+  let existing = null;
+  const probe = await api(`${path}?ref=${cfg.branch}`);
+  if (probe.ok) existing = (await probe.json()).sha;
+  const res = await api(path, { method: 'PUT', body: JSON.stringify({ message: `صورة: ${name}`, content: await fileToB64(file), branch: cfg.branch, ...(existing ? { sha: existing } : {}) }) });
+  if (!res.ok) throw new Error('ما قدرت أرفع الصورة (' + res.status + ')');
+  return path;
+}
+function rawUrl(path) { return `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${path}`; }
+
+/* ---------- Connect ---------- */
+function loadCfg() { try { return JSON.parse(localStorage.getItem(LS_KEY)); } catch { return null; } }
+function initConnect() {
+  const saved = loadCfg();
+  if (SITE.owner && SITE.repo) { $('repoFields').classList.add('hidden'); }
+  $('c_owner').value = saved?.owner || SITE.owner; $('c_repo').value = saved?.repo || SITE.repo; $('c_branch').value = saved?.branch || SITE.branch || 'main';
+  if (saved?.token) { cfg = saved; boot(); } else show('connect');
+}
+$('connectBtn').addEventListener('click', async () => {
+  cfg = { owner: $('c_owner').value.trim(), repo: $('c_repo').value.trim(), branch: $('c_branch').value.trim() || 'main', token: $('c_token').value.trim() };
+  if (!cfg.owner || !cfg.repo || !cfg.token) return status('عبّي كل الحقول أولاً.', 'err');
+  $('connectBtn').disabled = true;
+  try { await readData(); localStorage.setItem(LS_KEY, JSON.stringify(cfg)); status('تم الربط بنجاح', 'ok'); renderList(); show('listScreen'); $('logout').classList.remove('hidden'); }
+  catch (e) { status(e.message, 'err'); }
+  $('connectBtn').disabled = false;
+});
+$('logout').addEventListener('click', () => { localStorage.removeItem(LS_KEY); location.reload(); });
+
+async function boot() {
+  status('جاري تحميل الوصفات…');
+  try { await readData(); statusEl.className = 'status'; renderList(); show('listScreen'); $('logout').classList.remove('hidden'); }
+  catch (e) { status(e.message, 'err'); show('connect'); }
+}
+
+/* ---------- List ---------- */
+function sorted() { return [...doc.recipes].sort((a, b) => (a.order ?? 999) - (b.order ?? 999)); }
+function renderList() {
+  const list = sorted();
+  $('countLine').textContent = list.length ? `${list.length} وصفة على الموقع — اسحب الترتيب بالأسهم` : 'ما فيه وصفات بعد. أضف أول وصفة!';
+  $('list').innerHTML = list.map((r, i) => {
+    const cold = r.temperature === 'باردة';
+    const thumb = r.image ? `<img src="${rawUrl(r.image)}" alt="">` : (cold ? '🧊' : '☕');
+    return `<div class="item">
+      <div class="thumb ${cold ? 'cold' : ''}">${thumb}</div>
+      <div class="info">
+        <div class="title">${esc(r.title_ar)} <span class="badge ${cold ? 'cold' : 'hot'}">${esc(r.temperature)}</span></div>
+        <div class="meta">${esc((r.flavor_profile || []).join(' / ')) || esc(r.description_ar)}</div>
+      </div>
+      <div class="acts">
+        <button class="iconbtn" title="فوق" data-act="up" data-id="${esc(r.id)}" ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button class="iconbtn" title="تحت" data-act="down" data-id="${esc(r.id)}" ${i === list.length - 1 ? 'disabled' : ''}>↓</button>
+        <button class="btn outline sm" data-act="edit" data-id="${esc(r.id)}">تعديل</button>
+        <button class="btn danger sm" data-act="del" data-id="${esc(r.id)}">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+$('list').addEventListener('click', async (e) => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const id = b.dataset.id, act = b.dataset.act;
+  const r = doc.recipes.find((x) => x.id === id);
+  if (act === 'edit') return openForm(r);
+  if (act === 'del') {
+    if (!confirm(`حذف «${r.title_ar}» من الموقع؟`)) return;
+    doc.recipes = doc.recipes.filter((x) => x.id !== id);
+    return commit(`حذف وصفة: ${r.title_ar}`);
+  }
+  if (act === 'up' || act === 'down') {
+    const list = sorted(); const i = list.findIndex((x) => x.id === id); const j = act === 'up' ? i - 1 : i + 1;
+    if (j < 0 || j >= list.length) return;
+    [list[i], list[j]] = [list[j], list[i]];
+    list.forEach((x, k) => x.order = k + 1);
+    return commit(`ترتيب الوصفات`);
+  }
+});
+
+async function commit(message) {
+  status('جاري الحفظ…');
+  document.querySelectorAll('button').forEach((b) => b.disabled = true);
+  try { await writeData(message); status('تم الحفظ ✓ الموقع يتحدث خلال دقيقة', 'ok'); }
+  catch (e) { status(e.message, 'err'); await readData().catch(() => {}); }
+  document.querySelectorAll('button').forEach((b) => b.disabled = false);
+  renderList(); show('listScreen');
+}
+
+/* ---------- Form ---------- */
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function renderChars(selected = []) {
+  const all = [...new Set([...STANDARD_CHARS, ...doc.recipes.flatMap((r) => r.character || [])])];
+  $('f_chars').innerHTML = all.map((c) => `<label><input type="checkbox" value="${esc(c)}" ${selected.includes(c) ? 'checked' : ''}>${esc(c)}</label>`).join('');
+}
+function openForm(r = null) {
+  editingId = r ? r.id : null; pendingImage = null;
+  $('formTitle').textContent = r ? 'تعديل الوصفة' : 'وصفة جديدة';
+  $('f_id').value = r?.id || '';
+  $('f_title').value = r?.title_ar || '';
+  $('f_source').value = r?.source_url || '';
+  $('f_temp').value = r?.temperature || 'حارة';
+  $('f_servings').value = String(r?.servings || 1);
+  $('f_desc').value = r?.description_ar || '';
+  $('f_tags').value = (r?.flavor_profile || []).join(' / ');
+  renderChars(r?.character || []);
+  $('f_charExtra').value = '';
+  $('f_body').value = r?.body || '';
+  $('f_best').value = r?.best_for || '';
+  $('f_tiktok').value = r?.tiktok_url || '';
+  $('f_imageFile').value = '';
+  const prev = $('f_imagePreview');
+  if (r?.image) { prev.src = rawUrl(r.image); prev.style.display = 'block'; $('f_imageNote').textContent = 'الصورة الحالية'; $('removeImage').classList.remove('hidden'); }
+  else { prev.style.display = 'none'; $('f_imageNote').textContent = ''; $('removeImage').classList.add('hidden'); }
+  $('form').dataset.removeImage = '';
+  show('formScreen');
+}
+$('f_imageFile').addEventListener('change', (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  if (f.size > 4 * 1024 * 1024) { status('الصورة كبيرة (أكثر من 4MB). صغّرها وجرّب.', 'err'); e.target.value = ''; return; }
+  pendingImage = f; const prev = $('f_imagePreview'); prev.src = URL.createObjectURL(f); prev.style.display = 'block';
+  $('f_imageNote').textContent = 'الصورة الجديدة (تنرفع عند الحفظ)'; $('form').dataset.removeImage = '';
+});
+$('removeImage').addEventListener('click', () => { pendingImage = null; $('f_imagePreview').style.display = 'none'; $('f_imageNote').textContent = 'بتنحذف الصورة عند الحفظ'; $('form').dataset.removeImage = '1'; });
+$('addBtn').addEventListener('click', () => openForm(null));
+$('cancelBtn').addEventListener('click', () => show('listScreen'));
+
+function nextId() { let n = doc.recipes.length + 1; while (doc.recipes.some((r) => r.id === `recipe-${String(n).padStart(2, '0')}`)) n++; return `recipe-${String(n).padStart(2, '0')}`; }
+
+$('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = editingId || nextId();
+  const existing = doc.recipes.find((r) => r.id === id);
+  const character = [...$('f_chars').querySelectorAll('input:checked')].map((i) => i.value)
+    .concat($('f_charExtra').value.split(/[,،/]/).map((s) => s.trim()).filter(Boolean));
+  const rec = {
+    id,
+    title_ar: $('f_title').value.trim(),
+    temperature: $('f_temp').value,
+    character,
+    body: $('f_body').value || null,
+    flavor_profile: $('f_tags').value.split('/').map((s) => s.trim()).filter(Boolean),
+    description_ar: $('f_desc').value.trim(),
+    best_for: $('f_best').value.trim() || null,
+    servings: Number($('f_servings').value) || 1,
+    source_url: $('f_source').value.trim(),
+    tiktok_url: $('f_tiktok').value.trim() || null,
+    image: existing?.image || null,
+    order: existing?.order ?? (Math.max(0, ...doc.recipes.map((r) => r.order || 0)) + 1),
+  };
+  if ($('form').dataset.removeImage === '1') rec.image = null;
+
+  $('saveBtn').disabled = true;
+  try {
+    if (pendingImage) {
+      status('جاري رفع الصورة…');
+      const ext = (pendingImage.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+      rec.image = await uploadImage(pendingImage, `${id}.${ext}`);
+    }
+    if (existing) Object.assign(existing, rec); else doc.recipes.push(rec);
+    await commit(existing ? `تعديل وصفة: ${rec.title_ar}` : `وصفة جديدة: ${rec.title_ar}`);
+  } catch (err) { status(err.message, 'err'); }
+  $('saveBtn').disabled = false;
+});
+
+initConnect();
+</script>
+</body>
+</html>
