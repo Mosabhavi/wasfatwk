@@ -20,9 +20,14 @@
       "id": "recipe-01",
       "title_ar": "وصفة الأكواب الثقيلة والعسلية",
       "temperature": "حارة",
-      "character": ["عطرية"],
+      "character": [
+        "عطرية"
+      ],
       "body": "متوسط",
-      "flavor_profile": ["عطرية", "قوام متوسط"],
+      "flavor_profile": [
+        "عطرية",
+        "قوام متوسط"
+      ],
       "description_ar": "تنفع للأكواب الثقيلة و العسلية",
       "best_for": "المحاصيل ذات المعالجة العسلية أو الثقيلة",
       "servings": 1,
@@ -35,9 +40,15 @@
       "id": "recipe-02",
       "title_ar": "وصفة المحاصيل الإثيوبية والكولمبية المجففة",
       "temperature": "باردة",
-      "character": ["فاكهية", "متوازنة"],
+      "character": [
+        "فاكهية",
+        "متوازنة"
+      ],
       "body": null,
-      "flavor_profile": ["فاكهية", "متوازنة"],
+      "flavor_profile": [
+        "فاكهية",
+        "متوازنة"
+      ],
       "description_ar": "تنفع على اغلب المحاصيل الأثيوبية او الكولمبية المجففة",
       "best_for": "المحاصيل الإثيوبية أو الكولمبية بالمعالجة المجففة (Natural)",
       "servings": 1,
@@ -50,9 +61,17 @@
       "id": "recipe-03",
       "title_ar": "وصفة القوام الجميل والإيحاءات الباردة",
       "temperature": "حارة",
-      "character": ["فاكهية", "عطرية", "حموضة"],
+      "character": [
+        "فاكهية",
+        "عطرية",
+        "حموضة"
+      ],
       "body": null,
-      "flavor_profile": ["فاكهية", "عطرية", "حموضة متوسطة"],
+      "flavor_profile": [
+        "فاكهية",
+        "عطرية",
+        "حموضة متوسطة"
+      ],
       "description_ar": "الوصفة هذي تعطيكم كوب فيه قوام جميل و إيحاءات باردة جميلة",
       "best_for": null,
       "servings": 1,
@@ -65,9 +84,15 @@
       "id": "recipe-04",
       "title_ar": "وصفة اكسبلوم للبن الفاكهي",
       "temperature": "باردة",
-      "character": ["فاكهية"],
+      "character": [
+        "فاكهية"
+      ],
       "body": "متوسط",
-      "flavor_profile": ["فاكهية", "قوام متوسط", "إيحاءات واضحة"],
+      "flavor_profile": [
+        "فاكهية",
+        "قوام متوسط",
+        "إيحاءات واضحة"
+      ],
       "description_ar": "وصفة اكسبلوم للبن الفاكهي — بسيطة لكن جميلة، ممتازة للمحاصيل اللاهوائية والتجفيف المطول",
       "best_for": "المحاصيل اللاهوائية (Anaerobic) والتجفيف المطول",
       "servings": 1,
@@ -80,9 +105,15 @@
       "id": "recipe-05",
       "title_ar": "وصفة بروز الإيحاءات للمعالجات الثقيلة",
       "temperature": "باردة",
-      "character": ["فاكهية", "متوازنة"],
+      "character": [
+        "فاكهية",
+        "متوازنة"
+      ],
       "body": null,
-      "flavor_profile": ["فاكهية عالية", "متوازنة جداً"],
+      "flavor_profile": [
+        "فاكهية عالية",
+        "متوازنة جداً"
+      ],
       "description_ar": "وصفة جميلة تعطيك بروز واضح للإيحاءات، ممتازة للمعالجات الثقيلة",
       "best_for": "المعالجات الثقيلة",
       "servings": 1,
@@ -95,9 +126,14 @@
       "id": "recipe-06",
       "title_ar": "الوصفة الخفيفة (Tea-like)",
       "temperature": "باردة",
-      "character": ["عطرية"],
+      "character": [
+        "عطرية"
+      ],
       "body": "خفيف",
-      "flavor_profile": ["قوام خفيف", "وضوح عالي"],
+      "flavor_profile": [
+        "قوام خفيف",
+        "وضوح عالي"
+      ],
       "description_ar": "وصفة خفيفة لطيفة ولذيذة، ممتازة للمحاصيل الخفيفة أو العطرية / الـ tea-like",
       "best_for": "المحاصيل الخفيفة أو العطرية (tea-like)",
       "servings": 1,
@@ -110,9 +146,15 @@
       "id": "recipe-07",
       "title_ar": "وصفة كوبين بارد",
       "temperature": "باردة",
-      "character": ["متوازنة"],
+      "character": [
+        "متوازنة"
+      ],
       "body": "متوسط",
-      "flavor_profile": ["قوام متوسط", "توازن عالي", "بروز إيحاءات"],
+      "flavor_profile": [
+        "قوام متوسط",
+        "توازن عالي",
+        "بروز إيحاءات"
+      ],
       "description_ar": "وصفة كوبين بارد",
       "best_for": null,
       "servings": 2,
@@ -127,7 +169,11 @@
       "temperature": "حارة",
       "character": [],
       "body": "عالي",
-      "flavor_profile": ["قوام عالي", "سهل بالتحكم", "ثقل بالإيحاءات"],
+      "flavor_profile": [
+        "قوام عالي",
+        "سهل بالتحكم",
+        "ثقل بالإيحاءات"
+      ],
       "description_ar": "وصفة كوبين حار",
       "best_for": null,
       "servings": 2,
@@ -135,6 +181,30 @@
       "tiktok_url": null,
       "image": null,
       "order": 8
+    },
+    {
+      "id": "recipe-09",
+      "number": 9,
+      "title_ar": "وصفه بطل العالم تتسو كاسويا",
+      "temperature": "باردة",
+      "character": [
+        "فاكهية",
+        "متوازنة",
+        "حموضة منخفضة"
+      ],
+      "body": "متوسط",
+      "flavor_profile": [
+        "فاكهية متوسطه",
+        "قوام خفيف",
+        "حموضه منخفضة"
+      ],
+      "description_ar": "كوب خفيف و متوازن و ممتاز لقوة الصباح",
+      "best_for": "طبيعيه/عسلية/لاهوائية",
+      "servings": 1,
+      "source_url": "https://share-h5.xbloom.com/?id=qNTphxy%2BzbIFudl8sCSgdw%3D%3D",
+      "tiktok_url": null,
+      "image": null,
+      "order": 9
     }
   ]
 }
