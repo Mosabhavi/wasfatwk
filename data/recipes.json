@@ -228,6 +228,31 @@
       "tiktok_url": null,
       "image": null,
       "order": 10
+    },
+    {
+      "id": "recipe-11",
+      "number": 11,
+      "title_ar": "وصفتي المفضلة للحار",
+      "temperature": "حارة",
+      "character": [
+        "فاكهية",
+        "متوازنة",
+        "عطرية",
+        "حموضة منخفضة"
+      ],
+      "body": "عالي",
+      "flavor_profile": [
+        "فاكهية",
+        "عطرية",
+        "ثقيلة"
+      ],
+      "description_ar": "ممتازة للمحاصيل الفاكهية خاصه العسلية و اللاهوائية. \nو ممتازة لقهوة الصباح",
+      "best_for": "العسلية / العطرية / اللاهوائية",
+      "servings": 1,
+      "source_url": "https://share-h5.xbloom.com/?id=sIGT31rempRiWtXra4lrXQ%3D%3D",
+      "tiktok_url": null,
+      "image": null,
+      "order": 11
     }
   ]
 }
