@@ -205,6 +205,29 @@
       "tiktok_url": null,
       "image": null,
       "order": 9
+    },
+    {
+      "id": "recipe-10",
+      "number": 10,
+      "title_ar": "وصفه WasfatwK المميزه",
+      "temperature": "باردة",
+      "character": [
+        "فاكهية",
+        "متوازنة",
+        "حموضة منخفضة"
+      ],
+      "body": "متوسط",
+      "flavor_profile": [
+        "قوام متوسط",
+        "فاكهية خفيفة"
+      ],
+      "description_ar": "ممتازة لمحاصيل الانفيوزد و اللاهوائية. \nتخفف الحموضه بشكل واضح \nمع ٧٠-٩٠غ ثلج بالسيرفر و ٧٠ بالكوب",
+      "best_for": "الانفيوزد",
+      "servings": 1,
+      "source_url": "https://share-h5.xbloom.com/?id=XKuyTkPhI46hmPdASErZEA%3D%3D",
+      "tiktok_url": null,
+      "image": null,
+      "order": 10
     }
   ]
 }
